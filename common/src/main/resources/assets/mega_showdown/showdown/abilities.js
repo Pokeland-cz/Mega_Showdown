@@ -2102,12 +2102,6 @@ const Abilities = {
       }
     },
     onModifySpAPriority: 5,
-    onModifySpA(atk, attacker, defender, move) {
-      if (this.field.isTerrain("electricterrain")) {
-        this.debug("Hadron Engine boost");
-        return this.chainModify([5461, 4096]);
-      }
-    },
     flags: {},
     name: "Hadron Engine",
     rating: 4.5,
@@ -6525,14 +6519,14 @@ const Abilities = {
         pokemon.hp <= pokemon.maxhp / 2 &&
         !["Zen", "Galar-Zen"].includes(pokemon.species.forme)
       ) {
-		pokemon.formeChange('Darmanitan-Zen');
+        pokemon.formeChange('Darmanitan-Zen');
         pokemon.addVolatile("zenmode");
       } else if (
         pokemon.hp > pokemon.maxhp / 2 &&
         ["Zen", "Galar-Zen"].includes(pokemon.species.forme)
       ) {
         pokemon.addVolatile("zenmode");
-		pokemon.formeChange('Darmanitan');
+        pokemon.formeChange('Darmanitan');
         pokemon.removeVolatile("zenmode");
       }
     },
