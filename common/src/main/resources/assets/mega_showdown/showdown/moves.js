@@ -719,7 +719,7 @@ const Moves = {
   astralbarrage: {
     num: 825,
     accuracy: 100,
-    basePower: 120,
+    basePower: 90,
     category: "Special",
     name: "Astral Barrage",
     pp: 5,
@@ -3467,46 +3467,46 @@ const Moves = {
     priority: 0,
     flags: { bypasssub: 1, metronome: 1 },
     volatileStatus: "curse",
-	onModifyMove(move, source, target) {
-		const isGhost = source.hasType("Ghost");
-		const isGhostTera = source.teraType === "Ghost" || (source.hasType("Ghost") && source.teraType === "Stellar");
-		if (!source.terastallized) {
-			if (!isGhost) {
-				move.target = move.nonGhostTarget;
-			} else if (source.isAlly(target)) {
-				move.target = "randomNormal";
-			}
-		}
-		if (source.terastallized) {
-			if (!isGhostTera) {
-				move.target = move.nonGhostTarget;
-			} else if (source.isAlly(target)) {
-				move.target = "randomNormal";
-			}
-		}
-	},
-    onTryHit(target, source, move) {
-		const isGhost = source.hasType("Ghost");
-		const isGhostTera = source.teraType === "Ghost" || (source.hasType("Ghost") && source.teraType === "Stellar");
+    onModifyMove(move, source, target) {
+      const isGhost = source.hasType("Ghost");
+      const isGhostTera = source.teraType === "Ghost" || (source.hasType("Ghost") && source.teraType === "Stellar");
       if (!source.terastallized) {
-		  if (!isGhost) {
-			  delete move.volatileStatus;
-			  delete move.onHit;
-			  move.self = { boosts: { spe: -1, atk: 1, def: 1 } };
-		  } else if (move.volatileStatus && target.volatiles["curse"]) {
-			  return false;
-		  }
-	  }
-	  if (source.terastallized) {
-		  if (!isGhostTera) {
-			  delete move.volatileStatus;
-			  delete move.onHit;
-			  move.self = { boosts: { spe: -1, atk: 1, def: 1 } };
-		  } else if (move.volatileStatus && target.volatiles["curse"]) {
-			  return false;
-		  }
-	  }
-	}, 
+        if (!isGhost) {
+          move.target = move.nonGhostTarget;
+        } else if (source.isAlly(target)) {
+          move.target = "randomNormal";
+        }
+      }
+      if (source.terastallized) {
+        if (!isGhostTera) {
+          move.target = move.nonGhostTarget;
+        } else if (source.isAlly(target)) {
+          move.target = "randomNormal";
+        }
+      }
+    },
+    onTryHit(target, source, move) {
+      const isGhost = source.hasType("Ghost");
+      const isGhostTera = source.teraType === "Ghost" || (source.hasType("Ghost") && source.teraType === "Stellar");
+      if (!source.terastallized) {
+        if (!isGhost) {
+          delete move.volatileStatus;
+          delete move.onHit;
+          move.self = { boosts: { spe: -1, atk: 1, def: 1 } };
+        } else if (move.volatileStatus && target.volatiles["curse"]) {
+          return false;
+        }
+      }
+      if (source.terastallized) {
+        if (!isGhostTera) {
+          delete move.volatileStatus;
+          delete move.onHit;
+          move.self = { boosts: { spe: -1, atk: 1, def: 1 } };
+        } else if (move.volatileStatus && target.volatiles["curse"]) {
+          return false;
+        }
+      }
+    },
     onHit(target, source) {
       this.directDamage(source.maxhp / 2, source, source);
     },
@@ -5273,7 +5273,7 @@ const Moves = {
     priority: 0,
     flags: { protect: 1, mirror: 1, metronome: 1 },
     onBasePower(basePower, source) {
-      if (this.field.isTerrain("psychicterrain") && source.isGrounded()) {
+      if (this.field.isTerrain("psychicterrain") && source.isGrounded() && source.species.baseSpecies !== "Calyrex") {
         this.debug("terrain buff");
         return this.chainModify(1.5);
       }
@@ -6103,7 +6103,7 @@ const Moves = {
       move.basePower = item.fling.basePower;
       this.debug("BP: " + move.basePower);
       if (item.isBerry) {
-        move.onHit = function(foe) {
+        move.onHit = function (foe) {
           if (this.singleEvent("Eat", item, null, foe, null, null)) {
             this.runEvent("EatItem", foe, null, null, item);
             if (item.id === "leppaberry")
@@ -6927,22 +6927,11 @@ const Moves = {
     name: "Geomancy",
     pp: 10,
     priority: 0,
-    flags: { charge: 1, nonsky: 1, metronome: 1, nosleeptalk: 1, failinstruct: 1 },
-    onTryMove(attacker, defender, move) {
-      if (attacker.removeVolatile(move.id)) {
-        return;
-      }
-      this.add("-prepare", attacker, move.name);
-      if (!this.runEvent("ChargeMove", attacker, defender, move)) {
-        return;
-      }
-      attacker.addVolatile("twoturnmove", defender);
-      return null;
-    },
+    flags: { nonsky: 1, metronome: 1 },
     boosts: {
-      spa: 2,
-      spd: 2,
-      spe: 2
+      spa: 1,
+      spd: 1,
+      spe: 1
     },
     secondary: null,
     target: "self",
@@ -20341,11 +20330,11 @@ const Moves = {
         this.attrLastMove("[anim] Tera Blast " + source.teraType);
       }
     },
-	onModifyType(move, pokemon, target) {
-	  if (pokemon.terastallized) {
-		  move.type = pokemon.teraType.charAt(0).toUpperCase() + pokemon.teraType.slice(1);
-	  }
-	},
+    onModifyType(move, pokemon, target) {
+      if (pokemon.terastallized) {
+        move.type = pokemon.teraType.charAt(0).toUpperCase() + pokemon.teraType.slice(1);
+      }
+    },
     onModifyMove(move, pokemon) {
       if (pokemon.terastallized && pokemon.getStat("atk", false, true) > pokemon.getStat("spa", false, true)) {
         move.category = "Physical";
@@ -21801,7 +21790,7 @@ const Moves = {
     accuracy: 100,
     basePower: 15,
     basePowerCallback(pokemon, target, move) {
-      if (pokemon.species.name === "Greninja-Ash" && pokemon.hasAbility("battlebond") && !pokemon.transformed) {	
+      if (pokemon.species.name === "Greninja-Ash" && pokemon.hasAbility("battlebond") && !pokemon.transformed) {
         return move.basePower + 5;
       }
       return move.basePower;
@@ -21812,10 +21801,10 @@ const Moves = {
     priority: 1,
     flags: { protect: 1, mirror: 1, metronome: 1 },
     multihit: [2, 5],
-	onModifyMove(move, pokemon) {
-	  if (pokemon.species.name === "Greninja-Ash" && pokemon.hasAbility("battlebond") && !pokemon.transformed) {	
-		move.multihit = [3, 5];
-	  }
+    onModifyMove(move, pokemon) {
+      if (pokemon.species.name === "Greninja-Ash" && pokemon.hasAbility("battlebond") && !pokemon.transformed) {
+        move.multihit = [3, 5];
+      }
     },
     secondary: null,
     target: "normal",
