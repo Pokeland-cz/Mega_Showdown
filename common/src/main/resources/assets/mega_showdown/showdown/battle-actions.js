@@ -2403,6 +2403,9 @@ class BattleActions {
     return true;
   }
   canTerastallize(pokemon) {
+    if (pokemon.species.baseSpecies === "Shedinja") {
+      return null;
+    }
     if (
       pokemon.species.baseSpecies === "Rayquaza" &&
       !pokemon.getItem().zMove
